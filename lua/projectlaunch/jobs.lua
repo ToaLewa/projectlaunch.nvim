@@ -6,6 +6,8 @@ local term_name_prefix = "ProjectLaunch terminal - "
 
 local Job = {}
 function Job:new(command, opts)
+    local finalCommand = generateCommand(command)
+	
 	local temp_win, buf = win.create_temp_window()
 	vim.opt_local.spell = false
 
@@ -21,7 +23,7 @@ function Job:new(command, opts)
 		-- jobs won't get the updated command until it's rerun,
 		-- so it won't look like the newly edited command had been run automatically
 		name = command.name,
-		cmd = command.cmd,
+		cmd = finalCommand,
 		job_id = nil,
 		buf = buf,
 		running = true,
@@ -30,7 +32,7 @@ function Job:new(command, opts)
 		_args = { command, opts },
 	}
 
-	j.job_id = vim.fn.termopen(vim.split(command.cmd, " "), {
+	j.job_id = vim.fn.termopen(vim.split(finalCommand, " "), {
 		cwd = cwd,
 		on_exit = function(_, exit_code)
 			j.running = false
@@ -53,6 +55,32 @@ end
 
 function Job:kill()
 	vim.fn.jobstop(self.job_id)
+end
+
+function generateCommand(originalCommand) 
+	local finalCommand = originalCommand.cmd 
+
+	if string.find(originalCommand.cmd, "$1") then
+            finalCommand = replaceVariableInCommand("$1", finalCommand)
+	end
+
+	if string.find(originalCommand.cmd, "$2") then
+            finalCommand = replaceVariableInCommand("$2", finalCommand)
+	end
+
+	if string.find(originalCommand.cmd, "$3") then
+            finalCommand = replaceVariableInCommand("$3", finalCommand)
+	end
+
+    return finalCommand
+end
+
+function replaceVariableInCommand(var, finalCommand)
+    vim.ui.input({ prompt = "ProjectLaunch: Enter argument " .. var .. ": "}, function(cmd)
+        finalCommand = string.gsub(finalCommand, var, cmd)
+    end)
+
+    return finalCommand
 end
 
 return Job

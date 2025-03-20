@@ -13,12 +13,16 @@ local alt_configs = {
 local cached_config = nil
 local cached_ecosystem_specific_configs = nil
 
+local function get_config_path()
+	return path.join(config_utils.get_project_root(), options.get().config_path)
+end
+
 function M.get_project_config()
 	if cached_config ~= nil then
 		return cached_config
 	end
 
-	local config_path = path.join(config_utils.get_project_root(), options.get().config_path)
+	local config_path = get_config_path()
 	local ok, config = pcall(config_utils.read_json_file, config_path)
 
 	if ok then

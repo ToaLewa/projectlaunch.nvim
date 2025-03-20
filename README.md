@@ -100,7 +100,7 @@ vim.keymap.set('n', "<leader>lm", projectlaunch.show_prev, {noremap = true, expr
 -- restart the command running in the currently open split terminal
 vim.keymap.set('n', "<leader>lr", projectlaunch.restart_command_in_split, {noremap = true, expr = false, buffer = false})
 
---Edit project launch config in a buffer. Generates the config with a default if the file does not exist.
+-- edit project launch config in a buffer. Generates the config with a default if the file does not exist.
 vim.keymap.set('n', "<leader>le", projectlaunch.edit_config, {noremap = true, expr = false, buffer = false})
 
 -- add custom commands programmatically. you can write your own lua code to add a list of commands

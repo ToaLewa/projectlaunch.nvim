@@ -112,36 +112,36 @@ api.nvim_create_autocmd("BufWritePost", {
 })
 
 local function file_is_populated()
-    local isPopulated = nil
+	local isPopulated = nil
 
-    local file = io.open(get_config_path(), "r")
-    if file == nil then
-        io.close()
-        --File doesn't exist
-    else
-        local content = file:read("*a")
-        file:close()
-        if content == nil then
-            --File content bad
-        else
-            local hasCommands = string.find(content, "commands\"")
-            local hasCurlyBrace = string.find(content, "{")
-            local hasName = string.find(content, "\"name\"")
-            local hasCmd = string.find(content, "\"cmd\"")
+	local file = io.open(get_config_path(), "r")
+	if file == nil then
+		io.close()
+		--File doesn't exist
+	else
+		local content = file:read("*a")
+		file:close()
+		if content == nil then
+			--File content bad
+		else
+			local hasCommands = string.find(content, 'commands"')
+			local hasCurlyBrace = string.find(content, "{")
+			local hasName = string.find(content, '"name"')
+			local hasCmd = string.find(content, '"cmd"')
 
-            if hasCommands and hasCurlyBrace and hasName and hasCmd then
-                --File conforms to format
-                isPopulated = 1
-            end
-        end
-    end
+			if hasCommands and hasCurlyBrace and hasName and hasCmd then
+				--File conforms to format
+				isPopulated = 1
+			end
+		end
+	end
 
-    return isPopulated
+	return isPopulated
 end
 
 local function create_default_launch_JSON()
-    local config_file = io.open(get_config_path(), "w")
-    config_file:write([[
+	local config_file = io.open(get_config_path(), "w")
+	config_file:write([[
 {
     "commands": [
         {
@@ -151,19 +151,19 @@ local function create_default_launch_JSON()
     ]
 }
     ]])
-    config_file:close()
+	config_file:close()
 end
 
 local function open_launch_file()
-    if not file_is_populated() then
-        create_default_launch_JSON()
-    end
+	if not file_is_populated() then
+		create_default_launch_JSON()
+	end
 
-    vim.cmd(":edit " .. get_config_path())
+	vim.cmd(":edit " .. get_config_path())
 end
 
 function M.edit_config()
-    open_launch_file()
+	open_launch_file()
 end
 
 return M

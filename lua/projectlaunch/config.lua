@@ -116,7 +116,7 @@ local function file_is_populated()
 
 	local file = io.open(get_config_path(), "r")
 	if file == nil then
-		io.close()
+		io.close(file)
 		--File doesn't exist
 	else
 		local content = file:read("*a")

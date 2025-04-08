@@ -116,8 +116,8 @@ local function file_is_populated()
 
 	local file = io.open(get_config_path(), "r")
 	if file == nil then
-		io.close(file)
 		--File doesn't exist
+        vim.notify("Config doesn't exist", vim.log.levels.WARN)
 	else
 		local content = file:read("*a")
 		file:close()
@@ -141,6 +141,9 @@ end
 
 local function create_default_launch_JSON()
 	local config_file = io.open(get_config_path(), "w")
+
+    vim.notify("Writing default launch JSON", vim.log.levels.INFO)
+
 	config_file:write([[
 {
     "commands": [

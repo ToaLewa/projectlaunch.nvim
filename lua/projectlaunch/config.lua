@@ -140,21 +140,19 @@ local function file_is_populated()
 end
 
 local function create_default_launch_JSON()
-	local config_file = io.open(get_config_path(), "w")
+	local default_config = {
+		commands = {
+			{
+				name = "default",
+				cmd = "echo hello world",
+			},
+		},
+	}
 
-    vim.notify("Writing default launch JSON", vim.log.levels.INFO)
+	local default_json = vim.fn.json_encode(default_config)
 
-	config_file:write([[
-{
-    "commands": [
-        {
-            "name": "default",
-            "cmd": "echo hello world"
-        }
-    ]
-}
-    ]])
-	config_file:close()
+	vim.notify("Writing default launch JSON", vim.log.levels.INFO)
+	vim.fn.writefile({ default_json }, get_config_path())
 end
 
 local function open_launch_file()

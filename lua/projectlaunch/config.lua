@@ -155,12 +155,23 @@ local function create_default_launch_JSON()
 	vim.fn.writefile({ default_json }, get_config_path())
 end
 
+local function get_or_create_buffer(filename)
+    local buf_exists = vim.fn.bufexists(filename) ~= 0
+    if buf_exists then
+        return vim.fn.bufnr(filename)
+    end
+
+    return vim.fn.bufadd(filename)
+end
+
 local function open_launch_file()
 	if not file_approximates_format() then
 		create_default_launch_JSON()
 	end
 
-	vim.cmd(":edit " .. get_config_path())
+	local buf_id = get_or_create_buffer(get_config_path())
+	vim.api.nvim_set_current_buf(buf_id)
+	vim.api.nvim_set_option_value("buflisted", true, { buf = buf_id })
 end
 
 function M.edit_config()

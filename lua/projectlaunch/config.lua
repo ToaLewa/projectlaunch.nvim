@@ -111,32 +111,30 @@ api.nvim_create_autocmd("BufWritePost", {
 	callback = reload_config,
 })
 
-local function file_is_populated()
-	local isPopulated = nil
+-- validate config file exists and approximates format
+--
+-- File validation is purposely very loose so it is typo resistant.
+-- Loose validation prevents the overwriting of user commands.
+local function file_approximates_format()
+	local approximates_expected_format = nil
 
-	local file = io.open(get_config_path(), "r")
-	if file == nil then
-		--File doesn't exist
-        vim.notify("Config doesn't exist", vim.log.levels.WARN)
+	if not vim.fn.filereadable(get_config_path()) then
+		vim.notify("Config doesn't exist", vim.log.levels.WARN)
 	else
-		local content = file:read("*a")
-		file:close()
-		if content == nil then
-			--File content bad
-		else
-			local hasCommands = string.find(content, 'commands"')
-			local hasCurlyBrace = string.find(content, "{")
-			local hasName = string.find(content, '"name"')
-			local hasCmd = string.find(content, '"cmd"')
+		local lines =  vim.fn.readfile(get_config_path())
+		local content = table.concat(lines, '\n')
 
-			if hasCommands and hasCurlyBrace and hasName and hasCmd then
-				--File conforms to format
-				isPopulated = 1
-			end
+		local has_commands = string.find(content, 'commands"')
+		local has_curly_brace = string.find(content, "{")
+		local has_name = string.find(content, '"name"')
+		local has_cmd = string.find(content, '"cmd"')
+
+		if has_commands and has_curly_brace and has_name and has_cmd then
+			approximates_expected_format = 1
 		end
 	end
 
-	return isPopulated
+	return approximates_expected_format
 end
 
 local function create_default_launch_JSON()
@@ -156,7 +154,7 @@ local function create_default_launch_JSON()
 end
 
 local function open_launch_file()
-	if not file_is_populated() then
+	if not file_approximates_format() then
 		create_default_launch_JSON()
 	end
 

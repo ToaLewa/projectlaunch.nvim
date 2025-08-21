@@ -118,7 +118,9 @@ api.nvim_create_autocmd("BufWritePost", {
 local function file_approximates_format()
 	local approximates_expected_format = nil
 
-	if not vim.fn.filereadable(get_config_path()) then
+	local file_readable = vim.fn.filereadable(get_config_path())
+
+	if file_readable == 0 then
 		vim.notify("Config doesn't exist", vim.log.levels.WARN)
 	else
 		local lines =  vim.fn.readfile(get_config_path())

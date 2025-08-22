@@ -123,8 +123,8 @@ local function file_approximates_format()
 	if file_readable == 0 then
 		vim.notify("Config doesn't exist", vim.log.levels.WARN)
 	else
-		local lines =  vim.fn.readfile(get_config_path())
-		local content = table.concat(lines, '\n')
+		local lines = vim.fn.readfile(get_config_path())
+		local content = table.concat(lines, "\n")
 
 		local has_commands = string.find(content, 'commands"')
 		local has_curly_brace = string.find(content, "{")
